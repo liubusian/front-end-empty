@@ -1,0 +1,21 @@
+html,
+body {
+  height: 100%;
+}
+
+.class {
+  color: #fff;
+}
+
+#hideBtn {
+  width: 100px;
+  height: 50px;
+  border: 2px solid #000;
+}
+#hideBtn {
+  width: 100px;
+  height: 50px;
+  border: 2px solid red;
+}
+
+@import "./grid.scss";
