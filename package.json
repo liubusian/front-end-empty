@@ -1,7 +1,7 @@
 {
-  "name": "scss-jquery-boilerplate",
+  "name": "front-end-empty",
   "version": "1.0.0",
-  "description": "A basic boilerplate with webpack, jquery and sass preprocessor. It can serve for quick start your interview assignment or a prototype of an application. Not recommended for production applications.",
+  "description": "引用harishekhar/scss-jquery-boilerplate修改的空白專案",
   "main": "./src/index.html",
   "scripts": {
     "test": "echo \"No test specified\" && exit 0",
@@ -19,7 +19,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/harishekhar/scss-jquery-boilerplate.git"
+    "url": "git+https://github.com/liubusian/front-end-empty"
   },
   "author": "Hari Shekhar",
   "license": "ISC",

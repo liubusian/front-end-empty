@@ -61,8 +61,8 @@ module.exports = (env) => {
             loader: "file-loader",
             options: {
               name: "[name].[ext]",
-              outputPath: "./fonts/",
-              publicPath: "/fonts/",
+              outputPath: "./assets/fonts/",
+              publicPath: "/assets/fonts/",
             },
           },
         },
@@ -72,8 +72,8 @@ module.exports = (env) => {
             loader: "file-loader",
             options: {
               name: "[name].[ext]",
-              outputPath: "./fonts/",
-              publicPath: "/fonts/",
+              outputPath: "./assets/fonts/",
+              publicPath: "/assets/fonts/",
             },
           },
         },
@@ -83,8 +83,8 @@ module.exports = (env) => {
             loader: "file-loader",
             options: {
               name: "[name].[ext]",
-              outputPath: "./images/",
-              publicPath: "/images/",
+              outputPath: "./assets/images/",
+              publicPath: "/assets/images/",
             },
           },
         },
@@ -94,8 +94,8 @@ module.exports = (env) => {
             loader: "file-loader",
             options: {
               name: "[name].[ext]",
-              outputPath: "./images/",
-              publicPath: "/images/",
+              outputPath: "./assets/images/",
+              publicPath: "/assets/images/",
             },
           },
         },
