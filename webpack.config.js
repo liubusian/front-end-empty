@@ -1,36 +1,63 @@
 const path = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const glob = require("glob");
+
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 var webpack = require("webpack");
 
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
-  template: "./src/index.html",
-  filename: "index.html",
-  inject: "body",
-});
-const autoprefixer = require("autoprefixer");
+
+const HtmlWebpackPluginConfigs = glob
+  .sync("./src/views/*.html")
+  .map((template) => {
+    let filename = template.split("/").reverse()[0];
+    let files = filename.split(".");
+    let config = {
+      template,
+      filename: files[0] + ".html",
+      inject: true,
+      title: files[0],
+      minify: false,
+    };
+
+    return new HtmlWebpackPlugin(config);
+  });
 
 module.exports = (env) => {
   const mode = env.NODE_ENV;
+  const sassStyleLoader =
+    mode === "production"
+      ? {
+          loader: MiniCssExtractPlugin.loader,
+          options: {
+            publicPath: "../../",
+          },
+        }
+      : "style-loader";
+
   return {
     mode: mode,
     entry: {
-      app: ["./src/js/app.js", "./src/scss/index.scss"],
+      app: ["./src/assets/js/app.js", "./src/assets/scss/index.scss"],
     },
     output: {
       path: path.resolve(__dirname, "dist"),
       filename: "./assets/js/[name].[hash].js",
+    },
+    resolve: {
+      alias: {
+        "@": path.resolve(__dirname, "src"),
+        Assets: path.resolve(__dirname, "src/assets/"),
+      },
     },
     module: {
       rules: [
         {
           test: /\.scss$/,
           use: [
-            mode === "production"
-              ? MiniCssExtractPlugin.loader
-              : "style-loader",
+            sassStyleLoader,
             "css-loader",
             "postcss-loader",
             {
@@ -58,33 +85,36 @@ module.exports = (env) => {
         {
           test: /\.(eot|woff|woff2|[ot]tf)$/,
           use: {
-            loader: "file-loader",
+            loader: "url-loader",
             options: {
               name: "[name].[ext]",
               outputPath: "./assets/fonts/",
-              publicPath: "/assets/fonts/",
+              publicPath: "./assets/fonts/",
+              esModule: false,
+              options: {
+                limit: 8192,
+              },
             },
           },
         },
         {
           test: /.*font.*\.svg$/,
           use: {
-            loader: "file-loader",
+            loader: "url-loader",
             options: {
               name: "[name].[ext]",
               outputPath: "./assets/fonts/",
-              publicPath: "/assets/fonts/",
+              publicPath: "./assets/fonts/",
+              esModule: false,
             },
           },
         },
         {
           test: /^(?!.*font).*\.svg$/,
           use: {
-            loader: "file-loader",
+            loader: "url-loader",
             options: {
               name: "[name].[ext]",
-              outputPath: "./assets/images/",
-              publicPath: "/assets/images/",
             },
           },
         },
@@ -93,11 +123,24 @@ module.exports = (env) => {
           use: {
             loader: "file-loader",
             options: {
-              name: "[name].[ext]",
+              name: "[name].[hash].[ext]",
               outputPath: "./assets/images/",
-              publicPath: "/assets/images/",
+              esModule: false,
             },
           },
+        },
+        {
+          test: /\.html$/,
+          include: path.resolve(__dirname, "src/partials"),
+          use: [
+            {
+              loader: "html-loader",
+              options: {
+                minimize: false,
+                attrs: ["img:src"],
+              },
+            },
+          ],
         },
       ],
     },
@@ -114,7 +157,15 @@ module.exports = (env) => {
         filename: "./assets/css/[name].[hash].css",
         chunkFilename: "./assets/css/[name].[chunkhash].[hash].css",
       }),
-      HtmlWebpackPluginConfig,
+      ...HtmlWebpackPluginConfigs,
+      // new CopyWebpackPlugin({
+      //   patterns: [
+      //     {
+      //       from: path.resolve(__dirname, "static"),
+      //       to: path.resolve(__dirname, "dist"),
+      //     },
+      //   ],
+      // }),
     ],
     optimization: {
       splitChunks: {
@@ -144,6 +195,7 @@ module.exports = (env) => {
       },
     },
     devServer: {
+      contentBase: path.resolve(__dirname, "dist"),
       host: "0.0.0.0",
       compress: false,
       port: 9000,
